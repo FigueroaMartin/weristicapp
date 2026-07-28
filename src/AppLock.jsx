@@ -24,7 +24,7 @@ export default function AppLock({ children }) {
   return (
     <div className="lock-screen">
       <form className="lock-card" onSubmit={handleSubmit}>
-        <h1 className="lock-title">Nosotros</h1>
+        <h1 className="lock-title">Weristicapp</h1>
         <p className="lock-subtitle">Ingresa la clave para continuar</p>
         <input
           type="password"

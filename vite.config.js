@@ -11,8 +11,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       manifest: {
-        name: 'Nosotros',
-        short_name: 'Nosotros',
+        name: 'Weristicapp',
+        short_name: 'Weristicapp',
         description: 'Finanzas, alimentación y deporte compartidos',
         theme_color: '#0a0a0a',
         background_color: '#0a0a0a',

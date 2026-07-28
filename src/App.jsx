@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { PersonProvider, usePerson } from './PersonContext'
-import WelcomeCow from './WelcomeCow'
+import CowAssistant from './CowAssistant'
 import Finanzas from './pages/Finanzas'
 import Alimentacion from './pages/Alimentacion'
 import Deporte from './pages/Deporte'
@@ -48,7 +48,7 @@ function AppShell() {
     <div className={`app ${menuOpen ? 'nav-open' : 'nav-closed'}`} data-person={person || 'none'}>
       <header className="app-header">
         <button type="button" className="app-title-btn" onClick={() => setMenuOpen((v) => !v)}>
-          Nosotros
+          Weristicapp
         </button>
         <PersonSwitcher />
       </header>
@@ -76,11 +76,10 @@ function AppShell() {
 }
 
 function App() {
-  const [welcomed, setWelcomed] = useState(false)
-
   return (
     <PersonProvider>
-      {welcomed ? <AppShell /> : <WelcomeCow onDone={() => setWelcomed(true)} />}
+      <AppShell />
+      <CowAssistant />
     </PersonProvider>
   )
 }
