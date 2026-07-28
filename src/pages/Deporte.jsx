@@ -86,8 +86,8 @@ export default function Deporte() {
       )}
 
       <div className="sport-flow">
-        <div className="flow-item" style={{ order: 1, display: calendarOpen ? 'none' : 'block' }}>
-          <TodayPlan logs={logs} />
+        <div className="flow-item" style={{ order: 1 }}>
+          {!calendarOpen && <TodayPlan logs={logs} />}
         </div>
 
         <div className="flow-item" style={{ order: 2 }}>

@@ -519,24 +519,34 @@ textarea {
   padding-bottom: 2px;
 }
 .cal-day {
+  position: relative;
   aspect-ratio: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 2px;
-  border: 1px solid transparent;
+  border: 1px solid var(--border);
   background: var(--bg);
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   color: var(--text-h);
   font-size: 13px;
+  overflow: hidden;
+  isolation: isolate;
 }
 .cal-day.muted { opacity: 0.35; }
-.cal-day.today { border-color: var(--accent); }
+.cal-day.today { border-color: var(--accent); border-width: 2px; }
 .cal-day.selected {
-  background: var(--accent);
-  color: white;
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+.cal-day-num, .cal-day-dot {
+  position: relative;
+  z-index: 1;
+}
+.cal-day-num {
+  text-shadow: 0 1px 3px rgba(0,0,0,0.45);
+  font-weight: 600;
 }
 .cal-day-dot {
   width: 5px;
@@ -544,8 +554,44 @@ textarea {
   border-radius: 50%;
 }
 .cal-day-dot.rest { background: var(--text); opacity: 0.5; }
-.cal-day-dot.active { background: var(--positive); }
-.cal-day.selected .cal-day-dot { background: white; opacity: 1; }
+
+.cal-day-liquid {
+  position: absolute;
+  z-index: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--fill, 0%);
+  background: var(--liquid-color, transparent);
+  transition: height 0.5s ease, background 0.5s ease;
+  overflow: hidden;
+}
+.cal-day-liquid::before,
+.cal-day-liquid::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  width: 220%;
+  aspect-ratio: 1;
+  background: var(--liquid-color, transparent);
+  border-radius: 44%;
+  transform: translate(-50%, 68%) rotate(0deg);
+  animation: cal-liquid-spin 7s linear infinite;
+  opacity: 0.85;
+}
+.cal-day-liquid::after {
+  animation-duration: 11s;
+  animation-direction: reverse;
+  opacity: 0.45;
+}
+@keyframes cal-liquid-spin {
+  from { transform: translate(-50%, 68%) rotate(0deg); }
+  to { transform: translate(-50%, 68%) rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cal-day-liquid::before, .cal-day-liquid::after { animation: none; }
+}
 
 .cal-year-grid {
   display: grid;

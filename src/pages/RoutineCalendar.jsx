@@ -1,8 +1,26 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { supabase } from '../supabaseClient'
 import { usePerson } from '../PersonContext'
 import { useRoutineData } from './useRoutineData'
 import RoutineDayDetail from './RoutineDayDetail'
-import { sameDay, WEEKDAY_SHORT, MONTH_NAMES, getWeekDays, getMonthMatrix } from './dateUtils'
+import { sameDay, toDateKey, WEEKDAY_SHORT, MONTH_NAMES, getWeekDays, getMonthMatrix } from './dateUtils'
+
+function getVisibleBounds(viewMode, referenceDate) {
+  if (viewMode === 'week') {
+    const days = getWeekDays(referenceDate)
+    return [days[0], days[6]]
+  }
+  if (viewMode === 'year') {
+    return [new Date(referenceDate.getFullYear(), 0, 1), new Date(referenceDate.getFullYear(), 11, 31)]
+  }
+  const matrix = getMonthMatrix(referenceDate)
+  return [matrix[0][0], matrix[matrix.length - 1][6]]
+}
+
+function liquidColor(percent) {
+  const hue = Math.max(0, Math.min(120, percent * 1.2))
+  return `hsl(${hue}, 72%, 46%)`
+}
 
 export default function RoutineCalendar({ logs = [], open = false, onToggle }) {
   const { person } = usePerson()
@@ -10,8 +28,40 @@ export default function RoutineCalendar({ logs = [], open = false, onToggle }) {
   const [viewMode, setViewMode] = useState('month')
   const [referenceDate, setReferenceDate] = useState(() => new Date())
   const [selectedDate, setSelectedDate] = useState(() => new Date())
+  const [rangeCompletions, setRangeCompletions] = useState([])
 
   const today = useMemo(() => new Date(), [])
+
+  const loadRangeCompletions = () => {
+    if (!open || !person) return
+    const [start, end] = getVisibleBounds(viewMode, referenceDate)
+    supabase
+      .from('exercise_completions')
+      .select('*')
+      .gte('date', toDateKey(start))
+      .lte('date', toDateKey(end))
+      .then(({ data, error }) => {
+        if (!error) setRangeCompletions(data || [])
+      })
+  }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(loadRangeCompletions, [open, person, viewMode, referenceDate, exercises])
+
+  const dayStats = (d) => {
+    const weekday = d.getDay()
+    const dayExercises = exercises[weekday] || []
+    if (dayExercises.length === 0) return null
+
+    const dateKey = toDateKey(d)
+    const ids = new Set(dayExercises.map((ex) => ex.id))
+    const relevant = rangeCompletions.filter((c) => c.date === dateKey && ids.has(c.exercise_id))
+    if (relevant.length === 0) return null
+
+    const score = relevant.reduce((sum, c) => sum + (c.status === 'completo' ? 1 : c.status === 'parcial' ? 0.5 : 0), 0)
+    const percent = Math.round((score / dayExercises.length) * 100)
+    return { percent, color: liquidColor(percent) }
+  }
 
   const goPrev = () => {
     const d = new Date(referenceDate)
@@ -40,6 +90,7 @@ export default function RoutineCalendar({ logs = [], open = false, onToggle }) {
     const routine = routines[weekday]
     const isToday = sameDay(d, today)
     const isSelected = sameDay(d, selectedDate)
+    const stats = dayStats(d)
     return (
       <button
         type="button"
@@ -53,12 +104,14 @@ export default function RoutineCalendar({ logs = [], open = false, onToggle }) {
         ].join(' ').trim()}
         onClick={() => handlePickDay(d)}
       >
-        <span className="cal-day-num">{d.getDate()}</span>
-        {routine && (
-          routine.is_rest
-            ? <span className="cal-day-dot rest" />
-            : routine.title ? <span className="cal-day-dot active" /> : null
+        {stats && (
+          <span
+            className="cal-day-liquid"
+            style={{ '--fill': `${stats.percent}%`, '--liquid-color': stats.color }}
+          />
         )}
+        <span className="cal-day-num">{d.getDate()}</span>
+        {routine?.is_rest && <span className="cal-day-dot rest" />}
       </button>
     )
   }
@@ -131,6 +184,7 @@ export default function RoutineCalendar({ logs = [], open = false, onToggle }) {
                         const isCurrentMonth = d.getMonth() === monthDate.getMonth()
                         const isSelected = sameDay(d, selectedDate)
                         const isToday = sameDay(d, today)
+                        const stats = dayStats(d)
                         return (
                           <button
                             type="button"
@@ -141,6 +195,7 @@ export default function RoutineCalendar({ logs = [], open = false, onToggle }) {
                               isToday ? 'today' : '',
                               isSelected ? 'selected' : '',
                             ].join(' ').trim()}
+                            style={stats ? { background: stats.color, opacity: 0.35 + (stats.percent / 100) * 0.65 } : undefined}
                             onClick={() => handlePickDay(d)}
                           >
                             {d.getDate()}
@@ -162,6 +217,7 @@ export default function RoutineCalendar({ logs = [], open = false, onToggle }) {
             loading={loading}
             logs={logs}
             onChanged={reload}
+            onCompletionChanged={loadRangeCompletions}
           />
         </>
       )}

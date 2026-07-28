@@ -15,7 +15,7 @@ const STATUS_LABEL = { completo: 'Completo', parcial: 'Parcial', saltado: 'Salta
 let tempIdCounter = 0
 const nextTempId = () => `tmp-${++tempIdCounter}`
 
-export default function RoutineDayDetail({ person, date, routines, exercises, loading, logs = [], onChanged }) {
+export default function RoutineDayDetail({ person, date, routines, exercises, loading, logs = [], onChanged, onCompletionChanged }) {
   const weekday = date.getDay()
   const routine = routines[weekday]
   const dayExercises = exercises[weekday] || []
@@ -95,6 +95,7 @@ export default function RoutineDayDetail({ person, date, routines, exercises, lo
     } else {
       await supabase.from('exercise_completions').delete().eq('exercise_id', exerciseId).eq('date', dateKey)
     }
+    onCompletionChanged?.()
   }
 
   const handleSaveRoutine = async () => {
