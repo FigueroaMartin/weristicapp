@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { tts } from './tts'
 
-const GREETING = '¡Hola! Mi nombre es Ilía, bienvenido a Weristicapp 🐮'
+const GREETING = '¡Hola! Mi nombre es Lya, bienvenido a Weristicapp 🐮'
 
 export default function CowAssistant() {
   const [open, setOpen] = useState(false)
@@ -41,7 +41,7 @@ export default function CowAssistant() {
         type="button"
         className="cow-fab"
         onClick={() => setOpen((v) => !v)}
-        aria-label="Asistente Ilía"
+        aria-label="Asistente Lya"
       >
         <img
           src={`${import.meta.env.BASE_URL}cow-quiet.png`}

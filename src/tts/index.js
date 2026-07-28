@@ -6,7 +6,7 @@
  *
  * Usage:
  *   import { tts } from '../tts'
- *   await tts.speak('Hola, soy Ilía, tu asistente.')
+ *   await tts.speak('Hola, soy Lya, tu asistente.')
  *   tts.stop()
  */
 import { createWebSpeechEngine } from './engines/webSpeechEngine'

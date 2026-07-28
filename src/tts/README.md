@@ -1,6 +1,6 @@
 # Módulo TTS (`src/tts/`)
 
-Text-to-Speech local, gratuito y offline para el Asistente Vaca (Ilía).
+Text-to-Speech local, gratuito y offline para el Asistente Vaca (Lya).
 
 ## Por qué Web Speech API y no Kokoro / XTTS v2 / Fish Speech / Piper
 
@@ -25,7 +25,7 @@ Todo el resto de la app importa **únicamente** `src/tts/index.js`:
 ```js
 import { tts } from '../tts'
 
-await tts.speak('Hola, soy Ilía, tu asistente.')
+await tts.speak('Hola, soy Lya, tu asistente.')
 tts.stopCurrent()        // corta lo que se está diciendo ahora
 tts.stop()                // corta todo y vacía la cola
 tts.isPlaying()            // true/false

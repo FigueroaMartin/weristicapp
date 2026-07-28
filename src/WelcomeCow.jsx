@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { tts } from './tts'
 
-const MESSAGE = '¡Hola! Mi nombre es Ilía, bienvenido a Weristicapp 🐮'
+const MESSAGE = '¡Hola! Mi nombre es Lya, bienvenido a Weristicapp 🐮'
 
 export default function WelcomeCow({ onDone }) {
   const [talking, setTalking] = useState(true)

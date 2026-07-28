@@ -9,7 +9,7 @@ Estructura prevista:
 ```
 voices/
   femenina/      # Voces femeninas neutrales (la que se usa por defecto)
-  vaca/          # Voz personalizada del personaje "vaca" (Ilía), si se
+  vaca/          # Voz personalizada del personaje "vaca" (Lya), si se
                  # entrena o consigue una voz con ese carácter específico
   personalizada/ # Cualquier otra voz a medida que se agregue más adelante
 ```
