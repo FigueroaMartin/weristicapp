@@ -202,16 +202,63 @@ body {
   padding: 12px 14px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.3);
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 8px;
+}
+.cow-bubble-wide { max-width: 260px; }
+.cow-bubble-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
 }
 .cow-bubble p {
   margin: 0;
   font-size: 13px;
   font-weight: 600;
   color: var(--text-h);
-  flex: 1;
 }
+.cow-bubble-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.cow-bubble-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.cow-bubble-btn {
+  padding: 6px 14px;
+  font-size: 12px;
+}
+.cow-step-indicator {
+  font-size: 10px;
+  color: var(--text);
+  opacity: 0.6;
+  text-align: right;
+}
+.cow-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.cow-faq-item {
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.cow-faq-item:hover { border-color: var(--accent); }
+
 .cow-mute-btn {
   flex-shrink: 0;
   border: none;
