@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { tts } from './tts'
 
 const GREETING = '¡Hola! Mi nombre es Ilía, bienvenido a Weristicapp 🐮'
 
@@ -15,7 +16,13 @@ export default function CowAssistant() {
       setTyped(GREETING.slice(0, i))
       if (i >= GREETING.length) clearInterval(typeTimer)
     }, 40)
-    return () => clearInterval(typeTimer)
+
+    tts.speak(GREETING)
+
+    return () => {
+      clearInterval(typeTimer)
+      tts.stop()
+    }
   }, [open])
 
   return (
@@ -23,6 +30,11 @@ export default function CowAssistant() {
       {open && (
         <div className="cow-bubble">
           <p>{typed}<span className="welcome-caret">|</span></p>
+          {tts.isSupported && (
+            <button type="button" className="cow-mute-btn" onClick={() => tts.stopCurrent()} aria-label="Silenciar">
+              🔇
+            </button>
+          )}
         </div>
       )}
       <button

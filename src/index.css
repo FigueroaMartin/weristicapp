@@ -199,13 +199,27 @@ body {
   border-radius: 16px 16px 4px 16px;
   padding: 12px 14px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
 }
 .cow-bubble p {
   margin: 0;
   font-size: 13px;
   font-weight: 600;
   color: var(--text-h);
+  flex: 1;
 }
+.cow-mute-btn {
+  flex-shrink: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  opacity: 0.6;
+  padding: 2px;
+}
+.cow-mute-btn:hover { opacity: 1; }
 
 .app {
   max-width: 480px;

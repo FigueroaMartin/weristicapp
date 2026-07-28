@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { tts } from './tts'
 
 const MESSAGE = '¡Hola! Mi nombre es Ilía, bienvenido a Weristicapp 🐮'
 
@@ -19,10 +20,17 @@ export default function WelcomeCow({ onDone }) {
       setTyped(MESSAGE.slice(0, i))
       if (i >= MESSAGE.length) clearInterval(typeTimer)
     }, 45)
-    return () => clearInterval(typeTimer)
+
+    tts.speak(MESSAGE)
+
+    return () => {
+      clearInterval(typeTimer)
+      tts.stop()
+    }
   }, [])
 
   const handleContinue = () => {
+    tts.stop()
     setLeaving(true)
     setTimeout(() => onDone?.(), 350)
   }
