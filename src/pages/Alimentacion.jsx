@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../supabaseClient'
 import { usePerson } from '../PersonContext'
+import ComingSoon from './ComingSoon'
 
 const MEALS = [
   { value: 'desayuno', label: '🥐 Desayuno' },
@@ -10,6 +11,10 @@ const MEALS = [
 ]
 
 export default function Alimentacion() {
+  return <ComingSoon icon="🥗" title="Alimentación" />
+}
+
+function AlimentacionContent() {
   const { person } = usePerson()
   const [logs, setLogs] = useState([])
   const [loading, setLoading] = useState(true)

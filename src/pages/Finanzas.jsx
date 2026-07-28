@@ -1,10 +1,15 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../supabaseClient'
 import { usePerson } from '../PersonContext'
+import ComingSoon from './ComingSoon'
 
 const CATEGORIES = ['Comida', 'Bebidas', 'Entretenimiento', 'Transporte', 'Otro']
 
 export default function Finanzas() {
+  return <ComingSoon icon="💰" title="Finanzas" />
+}
+
+function FinanzasContent() {
   const { person } = usePerson()
   const [movements, setMovements] = useState([])
   const [loading, setLoading] = useState(true)

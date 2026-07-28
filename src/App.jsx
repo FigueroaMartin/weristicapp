@@ -5,9 +5,9 @@ import Alimentacion from './pages/Alimentacion'
 import Deporte from './pages/Deporte'
 
 const TABS = [
+  { key: 'deporte', label: 'Deporte', icon: '🏃', Component: Deporte },
   { key: 'finanzas', label: 'Finanzas', icon: '💰', Component: Finanzas },
   { key: 'alimentacion', label: 'Alimentación', icon: '🥗', Component: Alimentacion },
-  { key: 'deporte', label: 'Deporte', icon: '🏃', Component: Deporte },
 ]
 
 function PersonSwitcher() {
@@ -34,7 +34,7 @@ function PersonSwitcher() {
 
 function AppShell() {
   const { person } = usePerson()
-  const [activeTab, setActiveTab] = useState('finanzas')
+  const [activeTab, setActiveTab] = useState('deporte')
   const [menuOpen, setMenuOpen] = useState(false)
   const ActiveComponent = TABS.find((t) => t.key === activeTab).Component
 

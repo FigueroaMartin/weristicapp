@@ -189,6 +189,22 @@ body {
   margin: 20px 0 8px;
 }
 
+.coming-soon-card {
+  align-items: center;
+  text-align: center;
+  padding: 48px 24px;
+  gap: 8px;
+}
+.coming-soon-icon {
+  font-size: 40px;
+  opacity: 0.6;
+}
+.coming-soon-title {
+  margin: 8px 0 0;
+  font-size: 18px;
+  color: var(--text-h);
+}
+
 .card {
   background: var(--surface);
   border: 1px solid var(--border);
