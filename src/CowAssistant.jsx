@@ -3,14 +3,8 @@ import { useEffect, useState } from 'react'
 const GREETING = '¡Hola! Mi nombre es Ilía, bienvenido a Weristicapp 🐮'
 
 export default function CowAssistant() {
-  const [talking, setTalking] = useState(true)
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(false)
   const [typed, setTyped] = useState('')
-
-  useEffect(() => {
-    const mouthTimer = setInterval(() => setTalking((t) => !t), 350)
-    return () => clearInterval(mouthTimer)
-  }, [])
 
   useEffect(() => {
     if (!open) return
@@ -38,16 +32,9 @@ export default function CowAssistant() {
         aria-label="Asistente Ilía"
       >
         <img
-          src={`${import.meta.env.BASE_URL}cow-talking.png`}
-          alt=""
-          className="cow-fab-img"
-          style={{ opacity: talking ? 1 : 0 }}
-        />
-        <img
           src={`${import.meta.env.BASE_URL}cow-quiet.png`}
           alt=""
           className="cow-fab-img"
-          style={{ opacity: talking ? 0 : 1 }}
         />
       </button>
     </div>

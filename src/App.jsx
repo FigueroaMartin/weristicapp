@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { PersonProvider, usePerson } from './PersonContext'
+import WelcomeCow from './WelcomeCow'
 import CowAssistant from './CowAssistant'
 import Finanzas from './pages/Finanzas'
 import Alimentacion from './pages/Alimentacion'
@@ -76,10 +77,18 @@ function AppShell() {
 }
 
 function App() {
+  const [welcomed, setWelcomed] = useState(false)
+
   return (
     <PersonProvider>
-      <AppShell />
-      <CowAssistant />
+      {welcomed ? (
+        <>
+          <AppShell />
+          <CowAssistant />
+        </>
+      ) : (
+        <WelcomeCow onDone={() => setWelcomed(true)} />
+      )}
     </PersonProvider>
   )
 }
