@@ -3,6 +3,7 @@ import { supabase } from '../supabaseClient'
 import { usePerson } from '../PersonContext'
 import RoutineCalendar from './RoutineCalendar'
 import TodayPlan from './TodayPlan'
+import StreakCard from './StreakCard'
 
 export default function Deporte() {
   const { person } = usePerson()
@@ -55,35 +56,11 @@ export default function Deporte() {
     load()
   }
 
-  const streak = (name) => {
-    const days = new Set(
-      logs.filter((l) => l.person === name && l.completed).map((l) => new Date(l.created_at).toDateString())
-    )
-    let count = 0
-    let cursor = new Date()
-    while (days.has(cursor.toDateString())) {
-      count++
-      cursor.setDate(cursor.getDate() - 1)
-    }
-    return count
-  }
-
-  const people = [...new Set(logs.map((l) => l.person))]
-
   return (
     <div className="page">
       <h2>🏃 Deporte</h2>
 
-      {people.length > 0 && (
-        <div className="card">
-          {people.map((p) => (
-            <div key={p} className="balance-row">
-              <strong>{p}</strong>
-              <span>🔥 racha de {streak(p)} día{streak(p) === 1 ? '' : 's'}</span>
-            </div>
-          ))}
-        </div>
-      )}
+      <StreakCard />
 
       <div className="sport-flow">
         <div className="flow-item" style={{ order: 1 }}>
