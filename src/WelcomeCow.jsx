@@ -21,11 +21,26 @@ export default function WelcomeCow({ onDone }) {
       if (i >= MESSAGE.length) clearInterval(typeTimer)
     }, 45)
 
+    // Most mobile browsers block speech synthesis until the page has
+    // received a real user gesture — speaking immediately on mount (no
+    // prior tap) gets silently dropped. Try right away for browsers that
+    // allow it, and also arm a one-time listener for the first tap/click
+    // anywhere as a fallback so the greeting is never missed on mobile.
     tts.speak(MESSAGE)
+    let spoken = false
+    const speakOnce = () => {
+      if (spoken) return
+      spoken = true
+      tts.speak(MESSAGE)
+    }
+    window.addEventListener('pointerdown', speakOnce, { once: true })
+    window.addEventListener('keydown', speakOnce, { once: true })
 
     return () => {
       clearInterval(typeTimer)
       tts.stop()
+      window.removeEventListener('pointerdown', speakOnce)
+      window.removeEventListener('keydown', speakOnce)
     }
   }, [])
 
