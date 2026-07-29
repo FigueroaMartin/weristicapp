@@ -4,6 +4,7 @@ import { usePerson } from '../PersonContext'
 import RoutineCalendar from './RoutineCalendar'
 import TodayPlan from './TodayPlan'
 import StreakCard from './StreakCard'
+import RoutinePlanner from './RoutinePlanner'
 import { onTutorialAction } from '../tutorialBus'
 
 export default function Deporte() {
@@ -16,6 +17,7 @@ export default function Deporte() {
   const [error, setError] = useState('')
   const [showExtra, setShowExtra] = useState(false)
   const [calendarOpen, setCalendarOpen] = useState(false)
+  const [plannerOpen, setPlannerOpen] = useState(false)
   const calendarRef = useRef(null)
 
   useEffect(() => {
@@ -67,7 +69,14 @@ export default function Deporte() {
 
   return (
     <div className="page">
-      <h2>🏃 Deporte</h2>
+      <div className="page-heading-row">
+        <h2>🏃 Deporte</h2>
+        <button type="button" className="planner-gear-btn" onClick={() => setPlannerOpen(true)} aria-label="Planificador de rutina">
+          ⚙️
+        </button>
+      </div>
+
+      {plannerOpen && <RoutinePlanner onClose={() => setPlannerOpen(false)} />}
 
       <StreakCard />
 

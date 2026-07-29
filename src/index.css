@@ -283,6 +283,86 @@ body {
   50% { outline-color: var(--accent-2); }
 }
 
+.planner-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0;
+}
+.planner-panel {
+  width: 100%;
+  max-width: 560px;
+  max-height: 90svh;
+  overflow-y: auto;
+  background: var(--bg);
+  border-radius: 20px 20px 0 0;
+  padding: 20px 16px calc(20px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.planner-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.planner-header h2 { margin: 0; font-size: 18px; }
+.planner-subtitle {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--text);
+  opacity: 0.8;
+}
+.planner-close {
+  flex-shrink: 0;
+  border: none;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text-h);
+}
+.planner-days {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.planner-day { margin-bottom: 0; }
+.planner-day-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.planner-day-header strong { color: var(--text-h); font-size: 15px; }
+.planner-day-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.planner-copy {
+  display: flex;
+  gap: 6px;
+}
+.planner-copy select {
+  font-size: 12px;
+  padding: 8px 6px;
+}
+
+@media (min-width: 900px) {
+  .planner-overlay { align-items: center; padding: 24px; }
+  .planner-panel { border-radius: 20px; max-height: 85svh; }
+}
+
 .app {
   max-width: 480px;
   margin: 0 auto;
@@ -363,6 +443,21 @@ body {
   color: var(--text-h);
   margin: 12px 0;
 }
+.page-heading-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.page-heading-row h2 { margin: 12px 0; }
+.planner-gear-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 6px;
+  opacity: 0.7;
+}
+.planner-gear-btn:hover { opacity: 1; }
 .page h3 {
   font-size: 15px;
   color: var(--text-h);
