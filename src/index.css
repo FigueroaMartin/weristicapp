@@ -270,6 +270,19 @@ body {
 }
 .cow-mute-btn:hover { opacity: 1; }
 
+.tutorial-highlight {
+  position: relative;
+  z-index: 40;
+  border-radius: 14px;
+  outline: 3px solid var(--accent);
+  outline-offset: 4px;
+  animation: tutorial-pulse 1.4s ease-in-out infinite;
+}
+@keyframes tutorial-pulse {
+  0%, 100% { outline-color: var(--accent); }
+  50% { outline-color: var(--accent-2); }
+}
+
 .app {
   max-width: 480px;
   margin: 0 auto;

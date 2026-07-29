@@ -4,6 +4,7 @@ import { usePerson } from '../PersonContext'
 import RoutineCalendar from './RoutineCalendar'
 import TodayPlan from './TodayPlan'
 import StreakCard from './StreakCard'
+import { onTutorialAction } from '../tutorialBus'
 
 export default function Deporte() {
   const { person } = usePerson()
@@ -22,6 +23,14 @@ export default function Deporte() {
       calendarRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }
   }, [calendarOpen])
+
+  useEffect(() => onTutorialAction((action) => {
+    if (action.type === 'open-extra') setShowExtra(true)
+    if (action.type === 'close-extra') setShowExtra(false)
+    if (action.type === 'open-calendar') setCalendarOpen(true)
+    if (action.type === 'close-calendar') setCalendarOpen(false)
+    if (action.type === 'restore') { setShowExtra(false); setCalendarOpen(false) }
+  }), [])
 
   const load = async () => {
     const { data, error } = await supabase
@@ -63,11 +72,11 @@ export default function Deporte() {
       <StreakCard />
 
       <div className="sport-flow">
-        <div className="flow-item" style={{ order: 1 }}>
+        <div className="flow-item" style={{ order: 1 }} data-tutorial-id="today-plan">
           {!calendarOpen && <TodayPlan logs={logs} />}
         </div>
 
-        <div className="flow-item" style={{ order: 2 }}>
+        <div className="flow-item" style={{ order: 2 }} data-tutorial-id="actividad-extra">
           <div className="card collapsible-card">
             <button type="button" className="collapsible-toggle" onClick={() => setShowExtra((v) => !v)}>
               <span>➕ Actividad extra</span>
@@ -99,7 +108,7 @@ export default function Deporte() {
           </div>
         </div>
 
-        <div className="flow-item" style={{ order: calendarOpen ? 0 : 3 }} ref={calendarRef}>
+        <div className="flow-item" style={{ order: calendarOpen ? 0 : 3 }} ref={calendarRef} data-tutorial-id="calendario">
           <RoutineCalendar logs={logs} open={calendarOpen} onToggle={setCalendarOpen} />
         </div>
       </div>

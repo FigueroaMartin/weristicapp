@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { tts } from './tts'
 import { TUTORIAL_STEPS } from './tutorialContent'
+import { sendTutorialAction } from './tutorialBus'
 
 const TUTORIAL_DONE_KEY = 'weristicapp_tutorial_done'
 const FAQ_INTRO = '¿Tienes alguna duda? Elige un tema:'
@@ -28,11 +29,14 @@ export default function CowAssistant() {
   const [stepIndex, setStepIndex] = useState(0)
   const [sectionId, setSectionId] = useState(null)
 
-  const currentText =
-    mode === 'tutorial' ? TUTORIAL_STEPS[stepIndex].text
-    : mode === 'section' ? (TUTORIAL_STEPS.find((s) => s.id === sectionId)?.text || '')
-    : FAQ_INTRO
+  // The step object currently being shown, whether from the guided tour
+  // or from picking a topic in the "¿Tienes alguna duda?" menu.
+  const activeStep =
+    mode === 'tutorial' ? TUTORIAL_STEPS[stepIndex]
+    : mode === 'section' ? TUTORIAL_STEPS.find((s) => s.id === sectionId)
+    : null
 
+  const currentText = activeStep ? activeStep.text : FAQ_INTRO
   const typed = useTypewriter(currentText, open)
 
   useEffect(() => {
@@ -42,10 +46,35 @@ export default function CowAssistant() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, currentText])
 
+  // Drives the app: switches tabs / opens panels for the active step, and
+  // highlights the matching element on screen. Cleans up the highlight
+  // whenever the step changes or the assistant closes.
+  useEffect(() => {
+    if (!open || !activeStep) return
+
+    if (activeStep.action) sendTutorialAction(activeStep.action)
+
+    let highlighted = null
+    const timer = setTimeout(() => {
+      if (!activeStep.target) return
+      highlighted = document.querySelector(`[data-tutorial-id="${activeStep.target}"]`)
+      if (highlighted) {
+        highlighted.classList.add('tutorial-highlight')
+        highlighted.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+    }, 250)
+
+    return () => {
+      clearTimeout(timer)
+      if (highlighted) highlighted.classList.remove('tutorial-highlight')
+    }
+  }, [open, activeStep])
+
   const finishTutorial = () => {
     localStorage.setItem(TUTORIAL_DONE_KEY, 'true')
     tutorialDone.current = true
     tts.stop()
+    sendTutorialAction({ type: 'restore' })
     setOpen(false)
   }
 
@@ -55,7 +84,12 @@ export default function CowAssistant() {
   }
 
   const openBubble = () => {
-    if (open) { tts.stop(); setOpen(false); return }
+    if (open) {
+      tts.stop()
+      sendTutorialAction({ type: 'restore' })
+      setOpen(false)
+      return
+    }
     if (tutorialDone.current) {
       setMode('faq')
     } else {
@@ -72,6 +106,7 @@ export default function CowAssistant() {
 
   const backToFaq = () => {
     tts.stop()
+    sendTutorialAction({ type: 'restore' })
     setMode('faq')
   }
 
@@ -109,7 +144,7 @@ export default function CowAssistant() {
 
             {mode === 'section' && (
               <>
-                <strong className="cow-bubble-title">{TUTORIAL_STEPS.find((s) => s.id === sectionId)?.title}</strong>
+                <strong className="cow-bubble-title">{activeStep?.title}</strong>
                 <p>{typed}<span className="welcome-caret">|</span></p>
                 <button type="button" className="link-btn" onClick={backToFaq}>‹ Volver</button>
               </>

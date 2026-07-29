@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { PersonProvider, usePerson } from './PersonContext'
 import WelcomeCow from './WelcomeCow'
 import CowAssistant from './CowAssistant'
+import { onTutorialAction } from './tutorialBus'
 import Finanzas from './pages/Finanzas'
 import Alimentacion from './pages/Alimentacion'
 import Deporte from './pages/Deporte'
@@ -46,6 +47,11 @@ function AppShell() {
     setActiveTab(key)
     setMenuOpen(false)
   }
+
+  useEffect(() => onTutorialAction((action) => {
+    if (action.type === 'tab') setActiveTab(action.value)
+    if (action.type === 'restore') setActiveTab('deporte')
+  }), [])
 
   return (
     <div className={`app ${menuOpen ? 'nav-open' : 'nav-closed'}`} data-person={person || 'none'}>
