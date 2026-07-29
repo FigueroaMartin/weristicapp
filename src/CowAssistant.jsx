@@ -4,9 +4,7 @@ import { TUTORIAL_STEPS } from './tutorialContent'
 import { sendTutorialAction } from './tutorialBus'
 
 const TUTORIAL_DONE_KEY = 'weristicapp_tutorial_done'
-const VOICE_STORAGE_KEY = 'weristicapp_tts_voice'
 const FAQ_INTRO = '¿Tienes alguna duda? Elige un tema:'
-const VOICE_PREVIEW_TEXT = 'Hola, así sueno yo. ¿Te gusta esta voz?'
 
 function useTypewriter(text, active) {
   const [typed, setTyped] = useState('')
@@ -30,9 +28,6 @@ export default function CowAssistant() {
   const [mode, setMode] = useState(tutorialDone.current ? 'faq' : 'tutorial')
   const [stepIndex, setStepIndex] = useState(0)
   const [sectionId, setSectionId] = useState(null)
-  const [voices, setVoices] = useState([])
-  const [selectedVoiceId, setSelectedVoiceId] = useState(() => localStorage.getItem(VOICE_STORAGE_KEY) || '')
-  const [previewingVoiceId, setPreviewingVoiceId] = useState(null)
 
   // The step object currently being shown, whether from the guided tour
   // or from picking a topic in the "¿Tienes alguna duda?" menu.
@@ -42,10 +37,10 @@ export default function CowAssistant() {
     : null
 
   const currentText = activeStep ? activeStep.text : FAQ_INTRO
-  const typed = useTypewriter(currentText, open && mode !== 'voice')
+  const typed = useTypewriter(currentText, open)
 
   useEffect(() => {
-    if (!open || mode === 'voice') return
+    if (!open) return
     tts.speak(currentText)
     return () => tts.stop()
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -115,26 +110,6 @@ export default function CowAssistant() {
     setMode('faq')
   }
 
-  const openVoicePicker = async () => {
-    tts.stop()
-    setMode('voice')
-    if (voices.length === 0) {
-      const list = await tts.listVoices()
-      setVoices(list)
-    }
-  }
-
-  const chooseVoice = async (voiceId) => {
-    setPreviewingVoiceId(voiceId)
-    await tts.setVoice(voiceId)
-    setSelectedVoiceId(voiceId)
-    try {
-      await tts.speak(VOICE_PREVIEW_TEXT)
-    } finally {
-      setPreviewingVoiceId(null)
-    }
-  }
-
   return (
     <div className="cow-assistant">
       {open && (
@@ -163,11 +138,6 @@ export default function CowAssistant() {
                       {s.title}
                     </button>
                   ))}
-                  {tts.isSupported && (
-                    <button type="button" className="cow-faq-item cow-faq-item-voice" onClick={openVoicePicker}>
-                      🎙️ Cambiar la voz de Lya
-                    </button>
-                  )}
                 </div>
               </>
             )}
@@ -179,34 +149,9 @@ export default function CowAssistant() {
                 <button type="button" className="link-btn" onClick={backToFaq}>‹ Volver</button>
               </>
             )}
-
-            {mode === 'voice' && (
-              <>
-                <strong className="cow-bubble-title">Elegir voz</strong>
-                <p className="cow-voice-hint">Toca una voz para escucharla y usarla. La primera vez se descarga (puede tardar unos segundos).</p>
-                <div className="cow-faq-list">
-                  {voices.length === 0 ? (
-                    <span className="empty">Cargando voces…</span>
-                  ) : (
-                    voices.map((v) => (
-                      <button
-                        key={v.id}
-                        type="button"
-                        className={`cow-faq-item ${selectedVoiceId === v.id ? 'active' : ''}`}
-                        onClick={() => chooseVoice(v.id)}
-                        disabled={previewingVoiceId === v.id}
-                      >
-                        {previewingVoiceId === v.id ? '⏳' : selectedVoiceId === v.id ? '✓' : '▶'} {v.name}
-                      </button>
-                    ))
-                  )}
-                </div>
-                <button type="button" className="link-btn" onClick={backToFaq}>‹ Volver</button>
-              </>
-            )}
           </div>
 
-          {tts.isSupported && mode !== 'voice' && (
+          {tts.isSupported && (
             <button type="button" className="cow-mute-btn" onClick={() => tts.stopCurrent()} aria-label="Silenciar">
               🔇
             </button>

@@ -9,14 +9,17 @@
  *   await tts.speak('Hola, soy Lya, tu asistente.')
  *   tts.stop()
  */
-import { createPiperEngine } from './engines/piperEngine'
+import { createWebSpeechEngine } from './engines/webSpeechEngine'
 import { createQueue } from './queue'
 
 // --- Active engine -----------------------------------------------------
-// Piper (neural, in-browser) replaced the Web Speech engine because OS
-// voices sounded too robotic. To swap engines again later, change only
-// this one import + constructor call — nothing else in the app changes.
-const engine = createPiperEngine()
+// Piper (neural, in-browser) was tried to avoid the robotic OS voices, but
+// @mintplex-labs/piper-tts-web has an unfixable upstream bug: it hardcodes
+// a broken CDN URL for its ONNX WASM backend that can't be overridden for
+// every file it loads (see src/tts/README.md), so speech always fails.
+// Reverted to the reliable Web Speech engine. To swap engines again later,
+// change only this one import + constructor call — nothing else changes.
+const engine = createWebSpeechEngine()
 const queue = engine ? createQueue(engine) : null
 
 export const tts = {
