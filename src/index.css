@@ -258,6 +258,10 @@ body {
   cursor: pointer;
 }
 .cow-faq-item:hover { border-color: var(--accent); }
+.cow-faq-item.active { border-color: var(--accent); background: var(--accent); color: white; }
+.cow-faq-item:disabled { opacity: 0.6; cursor: wait; }
+.cow-faq-item-voice { border-style: dashed; }
+.cow-voice-hint { font-size: 11px; opacity: 0.7; margin: 0; }
 
 .cow-mute-btn {
   flex-shrink: 0;

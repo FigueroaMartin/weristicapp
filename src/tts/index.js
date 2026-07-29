@@ -9,13 +9,14 @@
  *   await tts.speak('Hola, soy Lya, tu asistente.')
  *   tts.stop()
  */
-import { createWebSpeechEngine } from './engines/webSpeechEngine'
+import { createPiperEngine } from './engines/piperEngine'
 import { createQueue } from './queue'
 
 // --- Active engine -----------------------------------------------------
-// To swap engines later (e.g. a future Piper/WASM engine), change only
-// this one import + constructor call. Nothing else in the app changes.
-const engine = createWebSpeechEngine()
+// Piper (neural, in-browser) replaced the Web Speech engine because OS
+// voices sounded too robotic. To swap engines again later, change only
+// this one import + constructor call — nothing else in the app changes.
+const engine = createPiperEngine()
 const queue = engine ? createQueue(engine) : null
 
 export const tts = {
@@ -54,8 +55,8 @@ export const tts = {
   },
 
   /**
-   * Changes the active voice. Pass "female_default" (the default) to let
-   * the module auto-pick the warmest available Spanish female voice.
+   * Changes the active voice. Use `tts.listVoices()` to get valid ids for
+   * the current engine (Piper voice ids, e.g. "es_MX-claude-high").
    * @param {string} voiceId
    */
   async setVoice(voiceId) {
