@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { supabase } from '../supabaseClient'
 import { sameDay, toDateKey, WEEKDAY_FULL, MONTH_NAMES } from './dateUtils'
 
@@ -23,6 +23,9 @@ export default function RoutineDayDetail({ person, date, routines, exercises, lo
   const isToday = sameDay(date, new Date())
 
   const [completions, setCompletions] = useState({})
+  const [weights, setWeights] = useState({})
+  const [weightDrafts, setWeightDrafts] = useState({})
+  const touchedWeights = useRef({})
   const [editing, setEditing] = useState(false)
   const [formTitle, setFormTitle] = useState('')
   const [formDescription, setFormDescription] = useState('')
@@ -42,6 +45,27 @@ export default function RoutineDayDetail({ person, date, routines, exercises, lo
   }
 
   useEffect(() => { loadCompletions(dateKey) }, [dateKey])
+
+  const loadWeights = async () => {
+    const ids = dayExercises.map((ex) => ex.id)
+    setWeightDrafts({})
+    touchedWeights.current = {}
+    if (ids.length === 0) { setWeights({}); return }
+    const { data, error } = await supabase
+      .from('exercise_weights')
+      .select('*')
+      .in('exercise_id', ids)
+      .lte('date', dateKey)
+      .order('date', { ascending: false })
+    if (error || !data) { setWeights({}); return }
+    const latestByExercise = {}
+    data.forEach((row) => {
+      if (!latestByExercise[row.exercise_id]) latestByExercise[row.exercise_id] = row
+    })
+    setWeights(latestByExercise)
+  }
+
+  useEffect(() => { loadWeights() }, [dateKey, weekday, exercises])
 
   useEffect(() => {
     setEditing(false)
@@ -96,6 +120,57 @@ export default function RoutineDayDetail({ person, date, routines, exercises, lo
       await supabase.from('exercise_completions').delete().eq('exercise_id', exerciseId).eq('date', dateKey)
     }
     onCompletionChanged?.()
+  }
+
+  const handleWeightChange = (exerciseId, value) => {
+    touchedWeights.current[exerciseId] = true
+    setWeightDrafts((prev) => ({ ...prev, [exerciseId]: value }))
+  }
+
+  const handleWeightBlur = async (exerciseId, rawValue) => {
+    if (!touchedWeights.current[exerciseId]) return // never edited, nothing to save
+    delete touchedWeights.current[exerciseId]
+
+    // Read the value straight from the input rather than from the
+    // `weightDrafts` state: if input+blur happen in the same batch (e.g.
+    // fast typing followed immediately by tabbing away), the state from
+    // onChange may not have flushed yet by the time this closure runs.
+    const trimmed = rawValue.trim()
+    const existing = weights[exerciseId]
+    const existingIsToday = existing?.date === dateKey
+
+    if (trimmed === '') {
+      if (existingIsToday) {
+        await supabase.from('exercise_weights').delete().eq('exercise_id', exerciseId).eq('date', dateKey)
+        const { data } = await supabase
+          .from('exercise_weights')
+          .select('*')
+          .eq('exercise_id', exerciseId)
+          .lte('date', dateKey)
+          .order('date', { ascending: false })
+          .limit(1)
+        setWeights((prev) => {
+          const copy = { ...prev }
+          if (data?.[0]) copy[exerciseId] = data[0]
+          else delete copy[exerciseId]
+          return copy
+        })
+      }
+      setWeightDrafts((prev) => { const copy = { ...prev }; delete copy[exerciseId]; return copy })
+      return
+    }
+
+    if (existingIsToday && existing.weight === trimmed) {
+      setWeightDrafts((prev) => { const copy = { ...prev }; delete copy[exerciseId]; return copy })
+      return
+    }
+
+    await supabase.from('exercise_weights').upsert(
+      { exercise_id: exerciseId, date: dateKey, weight: trimmed, updated_at: new Date().toISOString() },
+      { onConflict: 'exercise_id,date' }
+    )
+    setWeights((prev) => ({ ...prev, [exerciseId]: { exercise_id: exerciseId, date: dateKey, weight: trimmed } }))
+    setWeightDrafts((prev) => { const copy = { ...prev }; delete copy[exerciseId]; return copy })
   }
 
   const handleSaveRoutine = async () => {
@@ -245,9 +320,20 @@ export default function RoutineDayDetail({ person, date, routines, exercises, lo
                       {ex.notes && <div className="exercise-list-notes">{ex.notes}</div>}
                       {status && <span className={`status-label ${status}`}>{STATUS_LABEL[status]}</span>}
                     </div>
-                    <span className="exercise-list-meta">
-                      {ex.sets ? `${ex.sets} series` : ''}{ex.sets && ex.reps ? ' · ' : ''}{ex.reps ? `${ex.reps} reps` : ''}
-                    </span>
+                    <div className="exercise-list-side">
+                      <span className="exercise-list-meta">
+                        {ex.sets ? `${ex.sets} series` : ''}{ex.sets && ex.reps ? ' · ' : ''}{ex.reps ? `${ex.reps} reps` : ''}
+                      </span>
+                      <input
+                        type="text"
+                        inputMode="decimal"
+                        className="exercise-weight-input"
+                        placeholder="Peso"
+                        value={weightDrafts[ex.id] ?? weights[ex.id]?.weight ?? ''}
+                        onChange={(e) => handleWeightChange(ex.id, e.target.value)}
+                        onBlur={(e) => handleWeightBlur(ex.id, e.target.value)}
+                      />
+                    </div>
                   </li>
                 )
               })}

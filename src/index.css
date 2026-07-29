@@ -923,6 +923,27 @@ textarea {
 .exercise-list-name { color: var(--text-h); font-weight: 600; }
 .exercise-list-notes { color: var(--text); opacity: 0.7; font-size: 12px; margin-top: 2px; }
 .exercise-list-meta { color: var(--text); opacity: 0.8; white-space: nowrap; flex-shrink: 0; }
+.exercise-list-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.exercise-weight-input {
+  width: 64px;
+  padding: 4px 6px;
+  font-size: 12px;
+  text-align: right;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text-h);
+}
+.exercise-weight-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
 
 .status-check {
   flex-shrink: 0;
