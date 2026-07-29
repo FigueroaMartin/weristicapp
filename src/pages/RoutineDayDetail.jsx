@@ -304,35 +304,32 @@ export default function RoutineDayDetail({ person, date, routines, exercises, lo
               {dayExercises.map((ex) => {
                 const status = completions[ex.id] || null
                 return (
-                  <li key={ex.id}>
-                    <button
-                      type="button"
-                      className={`status-check ${status || 'none'}`}
-                      onClick={() => cycleCompletion(ex.id)}
-                      title="Marcar avance"
-                    >
+                  <li key={ex.id} className="exercise-list-item" onClick={() => cycleCompletion(ex.id)}>
+                    <span className={`status-check ${status || 'none'}`} title="Marcar avance">
                       {status === 'completo' && '✓'}
                       {status === 'parcial' && '½'}
                       {status === 'saltado' && '✕'}
-                    </button>
+                    </span>
                     <div className="exercise-list-main">
                       <span className="exercise-list-name">{ex.name}</span>
-                      {ex.notes && <div className="exercise-list-notes">{ex.notes}</div>}
                       {status && <span className={`status-label ${status}`}>{STATUS_LABEL[status]}</span>}
                     </div>
                     <div className="exercise-list-side">
                       <span className="exercise-list-meta">
                         {ex.sets ? `${ex.sets} series` : ''}{ex.sets && ex.reps ? ' · ' : ''}{ex.reps ? `${ex.reps} reps` : ''}
                       </span>
-                      <input
-                        type="text"
-                        inputMode="decimal"
-                        className="exercise-weight-input"
-                        placeholder="Peso"
-                        value={weightDrafts[ex.id] ?? weights[ex.id]?.weight ?? ''}
-                        onChange={(e) => handleWeightChange(ex.id, e.target.value)}
-                        onBlur={(e) => handleWeightBlur(ex.id, e.target.value)}
-                      />
+                      <div className="exercise-weight-field" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="text"
+                          inputMode="decimal"
+                          className="exercise-weight-input"
+                          placeholder="Peso"
+                          value={weightDrafts[ex.id] ?? weights[ex.id]?.weight ?? ''}
+                          onChange={(e) => handleWeightChange(ex.id, e.target.value)}
+                          onBlur={(e) => handleWeightBlur(ex.id, e.target.value)}
+                        />
+                        <span className="exercise-weight-suffix">Kg</span>
+                      </div>
                     </div>
                   </li>
                 )

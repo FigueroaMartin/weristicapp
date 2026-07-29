@@ -919,9 +919,10 @@ textarea {
   border-radius: 8px;
   font-size: 13px;
 }
+.exercise-list-item { cursor: pointer; }
+.exercise-list-item:active { background: var(--surface); }
 .exercise-list-main { flex: 1; min-width: 0; }
 .exercise-list-name { color: var(--text-h); font-weight: 600; }
-.exercise-list-notes { color: var(--text); opacity: 0.7; font-size: 12px; margin-top: 2px; }
 .exercise-list-meta { color: var(--text); opacity: 0.8; white-space: nowrap; flex-shrink: 0; }
 .exercise-list-side {
   display: flex;
@@ -930,8 +931,14 @@ textarea {
   gap: 4px;
   flex-shrink: 0;
 }
+.exercise-weight-field {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: default;
+}
 .exercise-weight-input {
-  width: 64px;
+  width: 52px;
   padding: 4px 6px;
   font-size: 12px;
   text-align: right;
@@ -943,6 +950,11 @@ textarea {
 .exercise-weight-input:focus {
   outline: none;
   border-color: var(--accent);
+}
+.exercise-weight-suffix {
+  font-size: 11px;
+  color: var(--text);
+  opacity: 0.7;
 }
 
 .status-check {
