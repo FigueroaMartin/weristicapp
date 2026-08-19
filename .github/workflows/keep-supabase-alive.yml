@@ -13,9 +13,14 @@ jobs:
     steps:
       - name: Query Supabase to keep the project active
         run: |
-          curl -sf "${VITE_SUPABASE_URL}/rest/v1/weekly_routine?select=weekday&limit=1" \
+          status=$(curl -s -o /tmp/resp.txt -w "%{http_code}" \
+            "${VITE_SUPABASE_URL}/rest/v1/weekly_routine?select=weekday&limit=1" \
             -H "apikey: ${VITE_SUPABASE_ANON_KEY}" \
-            -H "Authorization: Bearer ${VITE_SUPABASE_ANON_KEY}"
+            -H "Authorization: Bearer ${VITE_SUPABASE_ANON_KEY}")
+          echo "HTTP status: $status"
+          echo "Response body:"
+          cat /tmp/resp.txt
+          if [ "$status" -ge 400 ]; then exit 1; fi
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
