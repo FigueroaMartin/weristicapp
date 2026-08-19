@@ -184,7 +184,7 @@ export default function RoutineDayDetail({ person, date, routines, exercises, lo
       description: formDescription.trim(),
       is_rest: formIsRest,
       updated_at: new Date().toISOString(),
-    })
+    }, { onConflict: 'weekday,person' })
 
     const existingIds = dayExercises.map((ex) => ex.id)
     const keptIds = formExercises.filter((ex) => !String(ex.id).startsWith('tmp-')).map((ex) => ex.id)

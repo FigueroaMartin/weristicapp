@@ -78,7 +78,7 @@ export default function RoutinePlanner({ onClose }) {
       description: day.description.trim(),
       is_rest: day.isRest,
       updated_at: new Date().toISOString(),
-    })
+    }, { onConflict: 'weekday,person' })
 
     const existingIds = (exercises[wd] || []).map((ex) => ex.id)
     const keptIds = day.exercises.filter((ex) => !String(ex.id).startsWith('tmp-')).map((ex) => ex.id)
