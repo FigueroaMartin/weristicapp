@@ -60,14 +60,17 @@ export default function PanoramaRoute({ panorama, onBack, onChanged }) {
   const doneCount = stops.filter((s) => s.done).length
   const percent = stops.length ? Math.round((doneCount / stops.length) * 100) : 0
   const next = stops.find((s) => !s.done)
+  const focused = stops.find((s) => s.id === focusId)
 
   // Crear el mapa una sola vez.
   useEffect(() => {
     if (!mapEl.current || mapRef.current) return
-    const map = L.map(mapEl.current, { zoomControl: true, attributionControl: true })
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // Mapa minimalista: sin controles ni nombres de calles/negocios, solo la ruta.
+    const map = L.map(mapEl.current, { zoomControl: false, attributionControl: false })
+    const dark = window.matchMedia?.('(prefers-color-scheme: dark)').matches
+    L.tileLayer(`https://{s}.basemaps.cartocdn.com/${dark ? 'dark' : 'light'}_nolabels/{z}/{x}/{y}{r}.png`, {
       maxZoom: 19,
-      attribution: '&copy; OpenStreetMap',
+      subdomains: 'abcd',
     }).addTo(map)
     layerRef.current = L.layerGroup().addTo(map)
     map.setView([-33.44, -70.68], 15)
@@ -83,11 +86,10 @@ export default function PanoramaRoute({ panorama, onBack, onChanged }) {
     layer.clearLayers()
     if (located.length === 0) return
     const points = located.map((s) => [s.lat, s.lng])
-    L.polyline(points, { className: 'route-line', weight: 4, opacity: 0.7, dashArray: '6 8' }).addTo(layer)
+    L.polyline(points, { className: 'route-line', weight: 3, opacity: 0.8 }).addTo(layer)
     located.forEach((s) => {
       const state = s.done ? 'done' : next && s.id === next.id ? 'next' : 'todo'
       L.marker([s.lat, s.lng], { icon: stopIcon(s.position, state) })
-        .bindTooltip(s.name)
         .on('click', () => setFocusId(s.id))
         .addTo(layer)
     })
@@ -119,7 +121,7 @@ export default function PanoramaRoute({ panorama, onBack, onChanged }) {
       return
     }
     if (meMarkerRef.current) meMarkerRef.current.setLatLng([me.lat, me.lng])
-    else meMarkerRef.current = L.marker([me.lat, me.lng], { icon: meIcon, zIndexOffset: 1000 }).bindTooltip('Estás aquí').addTo(map)
+    else meMarkerRef.current = L.marker([me.lat, me.lng], { icon: meIcon, zIndexOffset: 1000 }).addTo(map)
   }, [me, tracking])
 
   const toggleStop = async (stop) => {
@@ -182,12 +184,20 @@ export default function PanoramaRoute({ panorama, onBack, onChanged }) {
               <div className="card route-map-card">
                 <div ref={mapEl} className="route-map" />
                 <div className="route-map-actions">
-                  <button type="button" className={`chip ${tracking ? 'chip-on' : ''}`} onClick={() => setTracking((v) => !v)}>
-                    📍 {tracking ? 'Ocultar mi ubicación' : 'Mostrar mi ubicación'}
+                  <button
+                    type="button"
+                    className={`route-map-btn ${tracking ? 'active' : ''}`}
+                    onClick={() => setTracking((v) => !v)}
+                    aria-label={tracking ? 'Ocultar mi ubicación' : 'Mostrar mi ubicación'}
+                  >
+                    📍
                   </button>
-                  {tracking && me && <button type="button" className="chip" onClick={centerOnMe}>🎯 Centrar en mí</button>}
+                  {tracking && me && (
+                    <button type="button" className="route-map-btn" onClick={centerOnMe} aria-label="Centrar en mí">🎯</button>
+                  )}
                 </div>
-                <p className="meta">Ubicaciones aproximadas. Usa “Cómo llegar” para navegar con Google Maps.</p>
+                {focused && <div className="route-map-label">{focused.name}</div>}
+                <span className="route-map-credit">© OpenStreetMap · CARTO</span>
               </div>
             )}
             {percent === 100 && panorama.status !== 'hecho' && (

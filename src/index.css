@@ -1179,15 +1179,60 @@ textarea {
   border-radius: inherit;
   transition: width 0.3s ease;
 }
-.route-map-card { padding: 8px; gap: 8px; }
-.route-map {
-  height: 320px;
-  border-radius: 10px;
+.route-map-card {
+  position: relative;
+  padding: 0;
   overflow: hidden;
-  z-index: 0;
 }
-.route-map-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.route-map-actions .chip { cursor: pointer; font-family: var(--sans); }
+.route-map {
+  height: 340px;
+  z-index: 0;
+  background: var(--bg);
+}
+.route-map-actions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.route-map-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+.route-map-btn.active { background: var(--accent); border-color: var(--accent); }
+.route-map-label {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 500;
+  max-width: calc(100% - 20px);
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text-h);
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+.route-map-credit {
+  position: absolute;
+  right: 6px;
+  bottom: 2px;
+  z-index: 500;
+  font-size: 8px;
+  opacity: 0.45;
+  color: var(--text);
+  pointer-events: none;
+}
 .route-line { stroke: var(--accent); }
 .route-marker {
   width: 28px;
