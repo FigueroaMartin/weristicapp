@@ -1161,3 +1161,96 @@ textarea {
   opacity: 0.75;
 }
 .panorama-action:hover { opacity: 1; }
+
+.panorama-item-body { cursor: pointer; flex: 1; min-width: 0; }
+.panorama-mini-progress { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
+.panorama-mini-progress .route-progress { background: var(--border); height: 6px; }
+.panorama-mini-progress .route-progress-fill { background: var(--accent); }
+
+.route-progress {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.3);
+  overflow: hidden;
+}
+.route-progress-fill {
+  height: 100%;
+  background: white;
+  border-radius: inherit;
+  transition: width 0.3s ease;
+}
+.route-map-card { padding: 8px; gap: 8px; }
+.route-map {
+  height: 320px;
+  border-radius: 10px;
+  overflow: hidden;
+  z-index: 0;
+}
+.route-map-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.route-map-actions .chip { cursor: pointer; font-family: var(--sans); }
+.route-line { stroke: var(--accent); }
+.route-marker {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: white;
+  background: #94a3b8;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+}
+.route-marker-next { background: var(--accent); transform: scale(1.15); }
+.route-marker-done { background: var(--positive); }
+.route-me {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #3b82f6;
+  border: 3px solid white;
+  box-shadow: 0 0 0 6px rgba(59,130,246,0.25);
+}
+.route-stops {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.route-stop {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+}
+.route-stop.focused { border-color: var(--accent); }
+.route-stop-next { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.route-stop-done .route-stop-body strong { text-decoration: line-through; opacity: 0.65; }
+.route-stop-body { flex: 1; min-width: 0; cursor: pointer; display: flex; flex-direction: column; gap: 2px; }
+.route-check {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  font-weight: 700;
+  cursor: pointer;
+}
+.route-stop-next .route-check { border-color: var(--accent); color: var(--accent); }
+.route-stop-done .route-check { background: var(--positive); border-color: var(--positive); color: white; }
+.route-link {
+  font-size: 12px;
+  color: var(--accent);
+  text-decoration: none;
+  margin-top: 4px;
+  align-self: flex-start;
+}

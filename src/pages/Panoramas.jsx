@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../supabaseClient'
 import { usePerson } from '../PersonContext'
 import { toDateKey } from './dateUtils'
+import PanoramaRoute from './PanoramaRoute'
 
 const CATEGORIES = [
   { value: 'comida', label: '🍽️ Comida' },
@@ -32,12 +33,13 @@ export default function Panoramas() {
   const [view, setView] = useState('pendiente')
   const [filter, setFilter] = useState('todas')
   const [suggestion, setSuggestion] = useState(null)
+  const [openId, setOpenId] = useState(null)
 
   const load = async () => {
     setLoading(true)
     const { data, error } = await supabase
       .from('panoramas')
-      .select('*')
+      .select('*, panorama_stops(done)')
       .order('created_at', { ascending: false })
     if (error) setError(error.message)
     else setPlans(data)
@@ -103,6 +105,17 @@ export default function Panoramas() {
 
   const visible = (view === 'hecho' ? done : pending)
     .filter((p) => filter === 'todas' || p.category === filter)
+
+  const openPlan = plans.find((p) => p.id === openId)
+  if (openPlan) {
+    return <PanoramaRoute panorama={openPlan} onBack={() => { setOpenId(null); load() }} onChanged={load} />
+  }
+
+  const routeProgress = (p) => {
+    const stops = p.panorama_stops || []
+    if (stops.length === 0) return null
+    return Math.round((stops.filter((s) => s.done).length / stops.length) * 100)
+  }
 
   return (
     <div className="page">
@@ -207,7 +220,7 @@ export default function Panoramas() {
             <ul className="list">
               {visible.map((p) => (
                 <li key={p.id} className={`list-item ${p.status === 'hecho' ? 'panorama-done' : ''}`}>
-                  <div>
+                  <div className="panorama-item-body" onClick={() => setOpenId(p.id)}>
                     <strong>{p.title}</strong>
                     <div className="meta">
                       {categoryLabel(p.category)}
@@ -215,7 +228,12 @@ export default function Panoramas() {
                       {p.place ? ` · ${p.place}` : ''}
                       {` · propuesto por ${p.person}`}
                     </div>
-                    {p.notes && <div className="meta">{p.notes}</div>}
+                    {routeProgress(p) != null && (
+                      <div className="panorama-mini-progress">
+                        <div className="route-progress"><div className="route-progress-fill" style={{ width: `${routeProgress(p)}%` }} /></div>
+                        <span className="meta">🗺️ Ruta {routeProgress(p)}% · toca para abrir</span>
+                      </div>
+                    )}
                   </div>
                   <div className="panorama-actions">
                     <button
