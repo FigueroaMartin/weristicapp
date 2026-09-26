@@ -1134,3 +1134,30 @@ textarea {
     line-height: 1.4;
   }
 }
+
+.panorama-next-title {
+  font-size: 22px;
+  font-weight: 700;
+}
+.panorama-suggestion {
+  border: 1px dashed var(--accent);
+  border-radius: 12px;
+  padding: 10px 12px;
+}
+.panorama-filters { margin: 12px 0; }
+.panorama-filters .chip { cursor: pointer; font-family: var(--sans); }
+.panorama-done strong { text-decoration: line-through; opacity: 0.7; }
+.panorama-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.panorama-action {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 4px;
+  opacity: 0.75;
+}
+.panorama-action:hover { opacity: 1; }

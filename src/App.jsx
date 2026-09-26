@@ -7,11 +7,13 @@ import Finanzas from './pages/Finanzas'
 import Alimentacion from './pages/Alimentacion'
 import Deporte from './pages/Deporte'
 import Galeria from './pages/Galeria'
+import Panoramas from './pages/Panoramas'
 
 const TABS = [
   { key: 'deporte', label: 'Deporte', icon: '🏃', Component: Deporte },
   { key: 'finanzas', label: 'Finanzas', icon: '💰', Component: Finanzas },
   { key: 'alimentacion', label: 'Alimentación', icon: '🥗', Component: Alimentacion },
+  { key: 'panoramas', label: 'Panoramas', icon: '🎉', Component: Panoramas },
   { key: 'galeria', label: 'Galería', icon: '🖼️', Component: Galeria },
 ]
 

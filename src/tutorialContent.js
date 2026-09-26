@@ -10,7 +10,7 @@ export const TUTORIAL_STEPS = [
   {
     id: 'intro',
     title: 'Bienvenida',
-    text: 'Este es Weristicapp: la app donde llevamos juntos nuestras rutinas, finanzas, alimentación y recuerdos. Te muestro rápido qué hay en cada parte.',
+    text: 'Este es Weristicapp: la app donde llevamos juntos nuestras rutinas, finanzas, alimentación, panoramas y recuerdos. Te muestro rápido qué hay en cada parte.',
     action: { type: 'tab', value: 'deporte' },
   },
   {
@@ -44,6 +44,12 @@ export const TUTORIAL_STEPS = [
     title: 'Alimentación',
     text: 'Alimentación también está en camino, para registrar lo que comemos día a día.',
     action: { type: 'tab', value: 'alimentacion' },
+  },
+  {
+    id: 'panoramas',
+    title: 'Panoramas',
+    text: 'En Panoramas guardamos las ideas de salidas y planes que queremos hacer juntos. Pueden agendarlos, marcarlos como hechos y, si no saben qué hacer, pedirme que sugiera uno al azar.',
+    action: { type: 'tab', value: 'panoramas' },
   },
   {
     id: 'galeria',
