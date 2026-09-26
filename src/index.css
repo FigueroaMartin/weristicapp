@@ -1299,3 +1299,5 @@ textarea {
   margin-top: 4px;
   align-self: flex-start;
 }
+.route-tiles-fallback { filter: grayscale(1) opacity(0.55); }
+.route-tiles-fallback.dark { filter: grayscale(1) invert(1) brightness(0.7) opacity(0.6); }

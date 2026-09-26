@@ -38,6 +38,7 @@ export default function PanoramaRoute({ panorama, onBack, onChanged }) {
   const [focusId, setFocusId] = useState(null)
   const [tracking, setTracking] = useState(false)
   const [me, setMe] = useState(null)
+  const [credit, setCredit] = useState('© Esri')
   const mapEl = useRef(null)
   const mapRef = useRef(null)
   const layerRef = useRef(null)
@@ -68,10 +69,23 @@ export default function PanoramaRoute({ panorama, onBack, onChanged }) {
     // Mapa minimalista: sin controles ni nombres de calles/negocios, solo la ruta.
     const map = L.map(mapEl.current, { zoomControl: false, attributionControl: false })
     const dark = window.matchMedia?.('(prefers-color-scheme: dark)').matches
-    L.tileLayer(`https://{s}.basemaps.cartocdn.com/${dark ? 'dark' : 'light'}_nolabels/{z}/{x}/{y}{r}.png`, {
-      maxZoom: 19,
-      subdomains: 'abcd',
-    }).addTo(map)
+    // Fondo gris de Esri sin etiquetas (no requiere clave). Si falla, se usa
+    // OpenStreetMap atenuado para que el mapa nunca quede en blanco.
+    const base = L.tileLayer(
+      `https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_${dark ? 'Dark' : 'Light'}_Gray_Base/MapServer/tile/{z}/{y}/{x}`,
+      { maxZoom: 19, maxNativeZoom: 16 },
+    ).addTo(map)
+    let failed = 0
+    base.on('tileerror', () => {
+      failed += 1
+      if (failed !== 3) return
+      map.removeLayer(base)
+      setCredit('© OpenStreetMap')
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        className: dark ? 'route-tiles-fallback dark' : 'route-tiles-fallback',
+      }).addTo(map)
+    })
     layerRef.current = L.layerGroup().addTo(map)
     map.setView([-33.44, -70.68], 15)
     mapRef.current = map
@@ -197,7 +211,7 @@ export default function PanoramaRoute({ panorama, onBack, onChanged }) {
                   )}
                 </div>
                 {focused && <div className="route-map-label">{focused.name}</div>}
-                <span className="route-map-credit">© OpenStreetMap · CARTO</span>
+                <span className="route-map-credit">{credit}</span>
               </div>
             )}
             {percent === 100 && panorama.status !== 'hecho' && (
